@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img"
+     aria-label="Équilibre instable">
+  <rect width="64" height="64" fill="#1a1f2c"/>
+  <!-- la coupole : un équilibre convexe, donc instable -->
+  <path d="M10 47 A 22 22 0 0 1 54 47" fill="none" stroke="#dcd5c2"
+        stroke-width="2.6" stroke-linecap="round"/>
+  <line x1="8" y1="47" x2="56" y2="47" stroke="#6a6f7a" stroke-width="1.4"/>
+  <!-- la bille, posée juste à côté du sommet : elle va tomber -->
+  <circle cx="36.5" cy="26.2" r="6" fill="#b85c3b"/>
+</svg>

@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La vie comme équilibre instable — Hans Boungomba</title>
+<meta name="description" content="Le même schéma d'une échelle à l'autre : molécule, cellule, individu, société, biosphère, cosmos.">
+<link rel="canonical" href="https://hansboungomba.fr/laboratoire/perspective/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="La vie comme équilibre instable">
+<meta property="og:description" content="Le même schéma d'une échelle à l'autre : molécule, cellule, individu, société, biosphère, cosmos.">
+<meta property="og:url" content="https://hansboungomba.fr/laboratoire/perspective/">
+<meta property="og:locale" content="fr_FR">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icone-180.png">
+<meta name="theme-color" content="#f1ede4">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Martian+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────── */
+:root {
+  --void:    #05060a;
+  --deep:    #0a0c14;
+  --surface: #11131c;
+  --panel:   #161924;
+  --edge:    rgba(255,255,255,0.07);
+  --edge2:   rgba(255,255,255,0.03);
+
+  --life:    #5ecf8a;   /* vert — vie, croissance */
+  --life-d:  #1f7a4a;
+  --death:   #cf5e5e;   /* rouge — mort, entropie */
+  --death-d: #7a1f1f;
+  --gold:    #d4a843;   /* or   — équilibre, tension */
+  --gold-d:  #7a5c1a;
+  --ice:     #5e9dcf;   /* bleu — cosmos, froid */
+  --text:    #ccc8b8;
+  --muted:   #6b6860;
+  --faint:   #2a2924;
+
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --mono:  'Martian Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.8;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ─── PARTICLE CANVAS ────────────────────────────────── */
+#cosmos {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── NAV ────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  height: 52px;
+  background: rgba(5,6,10,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--edge);
+}
+
+.nav-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.nav-scale {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.scale-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.scale-dot.active { background: var(--gold); transform: scale(1.4); }
+
+/* ─── SECTIONS ───────────────────────────────────────── */
+.chapter {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 0;
+}
+
+.inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 3rem;
+  width: 100%;
+}
+
+/* ─── TYPOGRAPHY ─────────────────────────────────────── */
+.epigraph {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 1rem;
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+  margin-bottom: 4rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--gold-d);
+}
+
+.chapter-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.chapter-num::after {
+  content: '';
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(to right, var(--gold-d), transparent);
+}
+
+h1 {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  color: #e8e2d4;
+  margin-bottom: 2rem;
+  letter-spacing: -0.01em;
+}
+
+h1 em { font-style: italic; color: var(--gold); }
+
+h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 300;
+  line-height: 1.2;
+  color: #e0dace;
+  margin-bottom: 1.5rem;
+}
+
+h2 em { font-style: italic; }
+
+h3 {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  font-weight: 400;
+}
+
+p { color: var(--text); margin-bottom: 1.25rem; max-width: 68ch; }
+p strong { color: #e8e2d4; font-weight: 600; }
+p em { color: var(--gold); font-style: italic; }
+
+.drop-cap::first-letter {
+  font-size: 4.2rem;
+  float: left;
+  line-height: 0.78;
+  margin-right: 0.1em;
+  color: var(--gold);
+  font-weight: 300;
+}
+
+/* ─── DIVIDER ─────────────────────────────────────────── */
+.ornament {
+  text-align: center;
+  color: var(--gold-d);
+  font-size: 1.2rem;
+  letter-spacing: 1rem;
+  margin: 3rem 0;
+  user-select: none;
+}
+
+/* ─── SCALE VISUALIZER ──────────────────────────────── */
+.scale-visual {
+  margin: 3rem 0;
+  overflow: hidden;
+}
+
+.scale-track {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  overflow: hidden;
+  height: 56px;
+}
+
+.scale-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-right: 1px solid var(--edge);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 0 4px;
+}
+.scale-item:last-child { border-right: none; }
+.scale-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.scale-item:hover { color: var(--text); }
+.scale-item:hover::before { opacity: 1; }
+.scale-item.s1::before { background: rgba(94,207,138,0.08); }
+.scale-item.s2::before { background: rgba(94,207,138,0.08); }
+.scale-item.s3::before { background: rgba(212,168,67,0.08); }
+.scale-item.s4::before { background: rgba(212,168,67,0.08); }
+.scale-item.s5::before { background: rgba(94,157,207,0.08); }
+.scale-item.s6::before { background: rgba(94,157,207,0.08); }
+
+/* ─── TENSION METER ─────────────────────────────────── */
+.tension-block {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+  padding: 2rem 2.5rem;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+}
+
+.tension-pole {
+  text-align: center;
+}
+.tension-pole .pole-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.tension-pole .pole-val {
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+}
+.pole-life .pole-name { color: var(--life-d); }
+.pole-life .pole-val  { color: var(--life); }
+.pole-death .pole-name { color: var(--death-d); }
+.pole-death .pole-val  { color: var(--death); }
+
+.tension-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tension-bar-wrap {
+  width: 180px;
+  height: 6px;
+  background: var(--faint);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.tension-bar {
+  position: absolute;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s cubic-bezier(.4,0,.2,1);
+}
+.tension-bar.life-bar {
+  left: 0;
+  background: linear-gradient(to right, var(--life-d), var(--life));
+}
+.tension-bar.death-bar {
+  right: 0;
+  background: linear-gradient(to left, var(--death-d), var(--death));
+}
+
+.tension-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ─── FORMULA BLOCKS ─────────────────────────────────── */
+.formula-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.fblock {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  padding: 1.5rem;
+}
+
+.fblock .flabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.fblock pre {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+.fblock pre .hl { color: var(--gold); }
+.fblock pre .life-c { color: var(--life); }
+.fblock pre .death-c { color: var(--death); }
+.fblock pre .ice-c { color: var(--ice); }
+.fblock pre .dim { color: var(--muted); }
+
+/* ─── NARRATIVE PANELS ───────────────────────────────── */
+.narrative-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2.5rem 0;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 2rem;
+}
+.panel p { font-size: 0.95rem; margin-bottom: 0.75rem; max-width: none; }
+.panel p:last-child { margin-bottom: 0; }
+
+/* ─── PHILOSOPHER QUOTES ─────────────────────────────── */
+.quote-strip {
+  border-left: 2px solid var(--gold-d);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  background: rgba(212,168,67,0.04);
+  border-radius: 0 6px 6px 0;
+}
+.quote-strip blockquote {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #d4cfbf;
+  margin-bottom: 0.5rem;
+}
+.quote-strip cite {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  font-style: normal;
+}
+
+/* ─── LIFE ARC CANVAS ────────────────────────────────── */
+#life-arc-canvas {
+  width: 100%;
+  height: 220px;
+  display: block;
+  margin: 2rem 0;
+}
+
+/* ─── ENTROPY METER INTERACTIVE ─────────────────────── */
+.entropy-demo {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 2rem 2.5rem;
+  margin: 2rem 0;
+}
+
+.entropy-demo h3 { margin-bottom: 1.25rem; }
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.slider-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  width: 130px;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+input[type=range] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--faint);
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+  border: 2px solid var(--void);
+  transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+.slider-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold);
+  width: 42px;
+  text-align: right;
+}
+
+#equilibrium-canvas {
+  width: 100%;
+  height: 180px;
+  display: block;
+  margin-top: 1rem;
+  border-radius: 4px;
+}
+
+/* ─── SCALES GRID ────────────────────────────────────── */
+.scales-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.scale-card {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.scale-card:hover { border-color: rgba(212,168,67,0.3); }
+
+.scale-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.sc-bio::before   { background: var(--life); }
+.sc-ind::before   { background: var(--gold); }
+.sc-soc::before   { background: var(--ice); }
+.sc-eco::before   { background: var(--death); }
+.sc-bios::before  { background: linear-gradient(to right, var(--life), var(--ice)); }
+.sc-cos::before   { background: var(--ice); }
+
+.scale-card h3 { color: var(--muted); margin-bottom: 0.6rem; }
+.scale-card .sc-title {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: #ddd8c8;
+  margin-bottom: 0.6rem;
+  line-height: 1.3;
+}
+.scale-card p {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: none;
+  margin: 0;
+}
+
+.instability-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-top: 0.75rem;
+}
+.badge-high   { background: rgba(207,94,94,0.12);  color: var(--death); }
+.badge-med    { background: rgba(212,168,67,0.12); color: var(--gold); }
+.badge-cosmic { background: rgba(94,157,207,0.12); color: var(--ice); }
+
+/* ─── SYNTHESIS ──────────────────────────────────────── */
+.synthesis-block {
+  border: 1px solid var(--edge);
+  border-top: 2px solid var(--gold);
+  border-radius: 0 0 8px 8px;
+  padding: 2.5rem;
+  background: var(--panel);
+  margin: 2rem 0;
+}
+
+.synthesis-block .synth-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--edge2);
+  align-items: start;
+}
+.synthesis-block .synth-row:last-child {
+  margin-bottom: 0; padding-bottom: 0; border-bottom: none;
+}
+
+.synth-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-top: 3px;
+}
+.synth-text { font-size: 0.95rem; }
+.synth-text strong { color: #e8e2d4; }
+
+/* ─── FINAL MEDITATION ───────────────────────────────── */
+#finale {
+  text-align: center;
+  padding: 10rem 3rem;
+}
+
+#finale h2 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin-bottom: 2rem;
+}
+
+#finale .final-eq {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  display: block;
+  margin: 2.5rem auto;
+  padding: 1.5rem 2rem;
+  border: 1px solid var(--gold-d);
+  border-radius: 6px;
+  background: rgba(212,168,67,0.04);
+  max-width: 560px;
+  line-height: 2;
+}
+
+#finale p {
+  margin: 0 auto 1.25rem;
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+/* ─── FOOTER ─────────────────────────────────────────── */
+footer {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 2rem 3rem;
+  border-top: 1px solid var(--edge);
+}
+footer p {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  max-none: none;
+  margin: 0;
+}
+
+/* ─── SCROLL REVEAL ──────────────────────────────────── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-in.visible { opacity: 1; transform: none; }
+.fade-in.d1 { transition-delay: 0.1s; }
+.fade-in.d2 { transition-delay: 0.2s; }
+.fade-in.d3 { transition-delay: 0.35s; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 700px) {
+  .formula-grid, .narrative-col, .scales-grid { grid-template-columns: 1fr; }
+  .tension-block { grid-template-columns: 1fr; text-align: center; }
+  nav { padding: 0 1.5rem; }
+  .inner { padding: 0 1.5rem; }
+  h1 { font-size: 2.4rem; }
+}
+</style>
+</head>
+<body>
+<div data-labbar style="font-family:'Inter',system-ui,sans-serif;font-size:13px;
+ display:flex;gap:18px;align-items:center;flex-wrap:wrap;
+ padding:10px 22px;background:#1a1f2c;color:#dcd5c2;position:relative;z-index:999">
+ <a href="/" style="color:#f1ede4;text-decoration:none;font-weight:500">Hans Boungomba</a>
+ <a href="/laboratoire/" style="color:#dcd5c2;text-decoration:none">Laboratoire</a>
+ <span style="color:#6a6f7a">Équilibre instable</span>
+ <a href="/livres/equilibre-instable/" style="margin-left:auto;color:#e8a07f;text-decoration:none">Le livre dont vient cette figure</a>
+</div>
+
+
+
+
+
+
+
+<canvas id="cosmos"></canvas>
+
+<nav>
+  <div class="nav-title">Perspective Ultime — Équilibre Instable</div>
+  <div class="nav-scale" id="nav-dots"></div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════
+     CHAPITRE 0 — OUVERTURE
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="ch0">
+  <div class="inner">
+    <div class="epigraph">« L'ordre n'est pas l'absence de chaos. Il est le chaos qui tient. »</div>
+    <div class="chapter-num">Perspective ultime · Approche holistique</div>
+    <h1>La Vie comme<br><em>Équilibre Instable</em></h1>
+    <p class="drop-cap" style="font-size:1.05rem; max-width:64ch;">
+      Toute existence — de la cellule à l'univers — est une tension permanente entre deux abîmes :
+      l'ordre et la dissolution. La vie n'est pas un état stable. Elle est un équilibre
+      <em>instable maintenu</em>, un combat actif contre l'entropie, renouvelé à chaque instant
+      par des mécanismes d'une complexité vertigineuse.
+    </p>
+    <p style="font-size:1.05rem; max-width:64ch;">
+      Cette perspective traverse six échelles d'existence — de la molécule au cosmos —
+      en trois dimensions simultanées : <strong>formelle</strong> (les équations qui gouvernent),
+      <strong>narrative</strong> (le sens que l'on en tire), <strong>visuelle</strong>
+      (ce que l'on peut voir et ressentir).
+    </p>
+
+    <div class="scale-visual fade-in" style="margin-top:3rem;">
+      <div class="scale-track">
+        <div class="scale-item s1">Cellule<br>10⁻⁵ m</div>
+        <div class="scale-item s2">Organisme<br>10⁰ m</div>
+        <div class="scale-item s3">Individu<br>psyché</div>
+        <div class="scale-item s4">Société<br>civilisation</div>
+        <div class="scale-item s5">Biosphère<br>10⁷ m</div>
+        <div class="scale-item s6">Cosmos<br>10²⁶ m</div>
+      </div>
+    </div>
+
+    <!-- Tension Vie / Mort interactive -->
+    <div class="tension-block fade-in d1">
+      <div class="tension-pole pole-life">
+        <div class="pole-name">Éros · Vie</div>
+        <div class="pole-val">+</div>
+      </div>
+      <div class="tension-center">
+        <div class="tension-label">tension fondamentale</div>
+        <div class="tension-bar-wrap">
+          <div class="tension-bar life-bar" id="tbar-life" style="width:50%"></div>
+          <div class="tension-bar death-bar" id="tbar-death" style="width:50%"></div>
+        </div>
+        <div class="tension-label" id="tension-state">équilibre instable</div>
+      </div>
+      <div class="tension-pole pole-death">
+        <div class="pole-name">Thanatos · Mort</div>
+        <div class="pole-val">−</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CHAPITRE I — BIOLOGIQUE
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="ch1">
+  <div class="inner">
+    <div class="chapter-num">Échelle I — Biologique</div>
+    <h2>La cellule :<br><em>le premier combat</em></h2>
+
+    <p class="drop-cap">
+      Tout commence là : une membrane qui sépare l'ordre du chaos. À l'intérieur,
+      des milliers de réactions chimiques maintiennent un état <em>hors d'équilibre thermodynamique</em>
+      grâce à un flux constant d'énergie. Sans ce flux, la cellule rejoint l'équilibre —
+      et l'équilibre, en thermodynamique, c'est la mort.
+    </p>
+
+    <div class="formula-grid fade-in">
+      <div class="fblock">
+        <span class="flabel" style="color:var(--life)">Thermodynamique du vivant</span>
+        <pre><span class="hl">dS_système</span> = dS_interne + dS_échange
+
+Organisme vivant :
+  <span class="life-c">dS_interne</span> &gt; 0  (entropie produite)
+  <span class="life-c">dS_échange</span> &lt;&lt; 0 (entropie exportée)
+
+→ L'organisme <span class="hl">exporte</span> son désordre
+  pour maintenir son ordre interne</pre>
+      </div>
+      <div class="fblock">
+        <span class="flabel" style="color:var(--life)">Prolifération vs Apoptose</span>
+        <pre><span class="hl">Équilibre cellulaire</span> :
+  dN/dt = r·N·(1 − N/K) − d·N
+
+<span class="life-c">r</span> : taux de division
+<span class="death-c">d</span> : taux d'apoptose
+<span class="hl">K</span> : capacité d'accueil tissulaire
+
+Rupture → <span class="death-c">cancer</span> (r ≫ d)
+          <span class="dim">ou</span> <span class="death-c">dégénérescence</span> (d ≫ r)</pre>
+      </div>
+    </div>
+
+    <div class="quote-strip fade-in d1">
+      <blockquote>« Les êtres vivants sont des tourbillons stables dans un fleuve instable. »</blockquote>
+      <cite>— Norbert Wiener, Cybernetics (1948)</cite>
+    </div>
+
+    <div class="narrative-col fade-in d2">
+      <div class="panel">
+        <h3 style="color:var(--life)">Ce qui maintient l'équilibre</h3>
+        <p>Les pompes ioniques (Na⁺/K⁺-ATPase) consomment 30 % de l'énergie cellulaire pour maintenir un gradient électrochimique. Sans elles, la membrane s'équilibre — et le potentiel d'action s'éteint.</p>
+        <p>Les protéines chaperonnes refoldent en permanence les protéines dénaturées. L'homéostasie n'est pas un état, c'est un processus.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--death)">Ce qui rompt l'équilibre</h3>
+        <p>Une mutation dans un gène suppresseur de tumeur (p53, BRCA1) retire un frein à la prolifération. Le système bascule vers un attracteur pathologique : la division incontrôlée.</p>
+        <p>En neurodégénérescence, l'agrégation protéique (tau, α-synucléine) perturbe l'équilibre synaptique jusqu'à l'irréversible.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CHAPITRE II — ORGANISME
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="ch2">
+  <div class="inner">
+    <div class="chapter-num">Échelle II — Organisme</div>
+    <h2>Le corps :<br><em>une cascade d'homéostasies</em></h2>
+
+    <p class="drop-cap">
+      Le corps humain n'est pas une machine. C'est un <em>réseau de boucles de rétroaction imbriquées</em>,
+      chacune maintenant son propre équilibre instable pendant que les autres oscillent autour du leur.
+      Température, pH, glycémie, pression artérielle : autant de funambules qui ne tiennent
+      que par leur mouvement constant.
+    </p>
+
+    <canvas id="life-arc-canvas"></canvas>
+
+    <div class="entropy-demo fade-in">
+      <h3>Simulateur d'équilibre physiologique</h3>
+      <div class="slider-row">
+        <span class="slider-label">MÉCANISMES ACTIFS</span>
+        <input type="range" id="s-homeostase" min="0" max="100" value="75" oninput="updateEquilibrium()">
+        <span class="slider-val" id="v-homeostase">75</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">PERTURBATIONS</span>
+        <input type="range" id="s-perturbation" min="0" max="100" value="30" oninput="updateEquilibrium()">
+        <span class="slider-val" id="v-perturbation">30</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">ÂGE (entropie)</span>
+        <input type="range" id="s-age" min="0" max="100" value="35" oninput="updateEquilibrium()">
+        <span class="slider-val" id="v-age">35</span>
+      </div>
+      <canvas id="equilibrium-canvas"></canvas>
+      <div id="eq-status" style="font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;margin-top:0.5rem;letter-spacing:0.1em;">
+        ÉTAT : ÉQUILIBRE MAINTENU
+      </div>
+    </div>
+
+    <div class="formula-grid fade-in d1">
+      <div class="fblock">
+        <span class="flabel" style="color:var(--gold)">Régulation du pH sanguin</span>
+        <pre><span class="hl">Zone vitale</span> : 7.35 – 7.45
+
+Henderson-Hasselbalch :
+  pH = pKa + log([A⁻]/[HA])
+
+<span class="life-c">Tampons</span> : HCO₃⁻/CO₂, hémoglobine
+<span class="death-c">Sortir de [7.0 – 7.8]</span> → mort certaine
+
+Marge absolue : ±0.05 unité pH</pre>
+      </div>
+      <div class="fblock">
+        <span class="flabel" style="color:var(--gold)">Posture debout</span>
+        <pre><span class="hl">Pendule inversé biologique</span> :
+
+Centre de masse au-dessus
+du polygone de sustentation
+
+→ système <span class="death-c">intrinsèquement instable</span>
+
+Stabilisé par :
+  <span class="life-c">proprioception</span> (muscles, articulations)
+  <span class="life-c">vestibulaire</span>  (oreille interne)
+  <span class="life-c">vision</span>        (cadre de référence)
+
+Correction toutes les ~50 ms</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CHAPITRE III — INDIVIDU / PSYCHÉ
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="ch3">
+  <div class="inner">
+    <div class="chapter-num">Échelle III — Psyché & Existence</div>
+    <h2>L'homme :<br><em>conscience de sa propre instabilité</em></h2>
+
+    <p class="drop-cap">
+      L'être humain est le seul système qui <em>sait</em> qu'il est instable.
+      Cette conscience de la mort — ce que Heidegger appelait l'<em>être-pour-la-mort</em>
+      — est elle-même une source d'instabilité radicale et, paradoxalement, le moteur
+      de tout ce que nous construisons, aimons, créons.
+    </p>
+
+    <div class="narrative-col fade-in">
+      <div>
+        <div class="quote-strip">
+          <blockquote>« L'existence précède l'essence. »</blockquote>
+          <cite>— Jean-Paul Sartre</cite>
+        </div>
+        <div class="quote-strip">
+          <blockquote>« Il faut imaginer Sisyphe heureux. »</blockquote>
+          <cite>— Albert Camus, Le Mythe de Sisyphe</cite>
+        </div>
+        <div class="quote-strip">
+          <blockquote>« Être authentique, c'est assumer sa finitude. »</blockquote>
+          <cite>— Martin Heidegger, Être et Temps</cite>
+        </div>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--gold)">La vie d'un homme — arc dynamique</h3>
+        <p>La naissance : entrée dans l'instabilité avec un état de dépendance totale. Maximum de vulnérabilité.</p>
+        <p>L'adolescence : bifurcation identitaire. Plusieurs attracteurs possibles (vocation, valeurs, relations) se disputent la trajectoire.</p>
+        <p>L'âge adulte : équilibre relatif, maintenu par responsabilités, sens, appartenance. Mais toujours précaire — une crise peut tout reconfiguurer.</p>
+        <p>Le vieillissement : les mécanismes de correction s'affaiblissent. L'entropie reprend lentement. L'équilibre devient de plus en plus coûteux à maintenir.</p>
+        <p>La mort : retour à l'équilibre thermodynamique. Non pas un échec — mais la condition même qui rendait la vie précieuse.</p>
+      </div>
+    </div>
+
+    <div class="formula-grid fade-in d1">
+      <div class="fblock">
+        <span class="flabel" style="color:var(--gold)">Freud — les deux pulsions</span>
+        <pre><span class="life-c">Éros</span>  (pulsion de vie) :
+  → Construction, liaison, amour
+  → Maintien de la complexité
+
+<span class="death-c">Thanatos</span> (pulsion de mort) :
+  → Destruction, déliaison
+  → Retour à l'inorganique
+
+Psyché = <span class="hl">tension permanente</span>
+  entre ces deux attracteurs</pre>
+      </div>
+      <div class="fblock">
+        <span class="flabel" style="color:var(--gold)">Théorie des catastrophes (Thom)</span>
+        <pre>Potentiel psychologique :
+  <span class="hl">V(x,a,b)</span> = x⁴ + ax² + bx
+
+Surface de catastrophe (fronce) :
+  → zones de bifurcation brutale
+  → bien-être ↔ effondrement
+
+Applications :
+  <span class="life-c">résilience</span> : large bassin d'attraction
+  <span class="death-c">fragilité</span>  : bassin étroit, bords proches</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CHAPITRE IV — SOCIÉTÉS
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="ch4">
+  <div class="inner">
+    <div class="chapter-num">Échelle IV — Sociétés & Civilisations</div>
+    <h2>Les civilisations :<br><em>équilibres fragiles à grande échelle</em></h2>
+
+    <p class="drop-cap">
+      Une civilisation est un équilibre instable d'une nature particulière :
+      elle est maintenue non par des lois physiques mais par <em>des croyances partagées</em>,
+      des institutions et des récits collectifs. Quand ces récits s'effondrent, la civilisation
+      bascule — parfois en une génération.
+    </p>
+
+    <div class="narrative-col fade-in">
+      <div class="panel">
+        <h3 style="color:var(--ice)">Mécanismes de stabilisation sociale</h3>
+        <p>Les institutions (droit, monnaie, famille, État) sont des <strong>attracteurs stables</strong> construits artificiellement pour contenir les instabilités individuelles.</p>
+        <p>Le consensus social fonctionne comme un paramètre d'ordre : au-delà d'un seuil d'érosion, la cohérence collective se dissout brusquement (transition de phase sociale).</p>
+        <p>Les révolutions sont des bifurcations : un état ancien devient instable, et le système saute vers un nouvel attracteur — souvent imprévisible avant le saut.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--death)">Sources d'instabilité sociétale</h3>
+        <p>Les <strong>inégalités croissantes</strong> accumulent une contrainte mécanique analogue à celle des plaques tectoniques : la rupture ne s'annonce pas, elle survient.</p>
+        <p>La <strong>polarisation informationnelle</strong> (chambres d'écho, algorithmes) agit comme un activateur de Turing à l'échelle sociale : les différences s'amplifient au lieu de se diffuser.</p>
+        <p>La <strong>perte de sens collectif</strong> (anomie, Durkheim) fragilise les bassins d'attraction stabilisateurs. Les individus deviennent des particules libres dans un espace à faible potentiel.</p>
+      </div>
+    </div>
+
+    <div class="fblock fade-in d1" style="margin:1.5rem 0;">
+      <span class="flabel" style="color:var(--ice)">Modèle de Schelling — ségrégation par bifurcation</span>
+      <pre style="font-size:11px; line-height:1.9;">Agents avec préférence légère (30 % similaires suffit) :
+
+  Itération 0 : distribution aléatoire → mélange apparent
+  Itération n : rétroactions locales → ségrégation quasi-totale
+
+L'équilibre mixte est <span class="hl">instable</span> : toute fluctuation locale
+le fait basculer vers l'attracteur ségrégué.
+
+→ Même des préférences <span class="life-c">modérées</span> produisent des effets <span class="death-c">extrêmes</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CHAPITRE V — BIOSPHÈRE & COSMOS
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="ch5">
+  <div class="inner">
+    <div class="chapter-num">Échelle V & VI — Biosphère & Cosmos</div>
+    <h2>De la Terre<br><em>à l'univers en expansion</em></h2>
+
+    <p class="drop-cap">
+      La vie sur Terre est une exception cosmique : elle a émergé dans une <em>zone habitable</em>
+      d'une précision extraordinaire. La biosphère entière est un équilibre instable maintenu
+      par des cycles biogéochimiques que l'activité humaine perturbe à une vitesse sans
+      précédent dans l'histoire géologique.
+    </p>
+
+    <div class="scales-grid fade-in">
+      <div class="scale-card sc-bio">
+        <h3>Échelle I</h3>
+        <div class="sc-title">Cellule</div>
+        <p>Maintien hors-équilibre thermodynamique. Coût : ~30 % ATP pour les pompes ioniques seules.</p>
+        <span class="instability-badge badge-high">Instabilité haute</span>
+      </div>
+      <div class="scale-card sc-ind">
+        <h3>Échelle II–III</h3>
+        <div class="sc-title">Organisme & Psyché</div>
+        <p>Homéostasie multi-paramétrique et conscience de la finitude. Bifurcations pathologiques fréquentes.</p>
+        <span class="instability-badge badge-high">Instabilité haute</span>
+      </div>
+      <div class="scale-card sc-soc">
+        <h3>Échelle IV</h3>
+        <div class="sc-title">Sociétés</div>
+        <p>Équilibres construits par conventions. Robustes à court terme, fragiles à long terme.</p>
+        <span class="instability-badge badge-med">Instabilité moyenne</span>
+      </div>
+      <div class="scale-card sc-eco">
+        <h3>Échelle V</h3>
+        <div class="sc-title">Biosphère</div>
+        <p>Cycles C, N, H₂O interdépendants. Perturbation anthropique : réchauffement, acidification, extinction.</p>
+        <span class="instability-badge badge-high">Instabilité croissante</span>
+      </div>
+      <div class="scale-card sc-bios">
+        <h3>Échelle VI-a</h3>
+        <div class="sc-title">Zone habitable</div>
+        <p>La Terre orbite dans une fenêtre de ~0.1 UA. Légèrement plus proche ou plus loin : Venus ou Mars.</p>
+        <span class="instability-badge badge-med">Équilibre précis</span>
+      </div>
+      <div class="scale-card sc-cos">
+        <h3>Échelle VI-b</h3>
+        <div class="sc-title">Univers</div>
+        <p>Expansion accélérée (énergie sombre). Destin : Big Freeze, Big Rip, ou rebond — tous instables.</p>
+        <span class="instability-badge badge-cosmic">Instabilité cosmique</span>
+      </div>
+    </div>
+
+    <div class="formula-grid fade-in d1">
+      <div class="fblock">
+        <span class="flabel" style="color:var(--ice)">Équilibre radiatif terrestre</span>
+        <pre><span class="hl">Bilan énergétique</span> :
+  E_absorbée = E_rayonnée
+
+  S·(1−α)/4 = σ·T⁴
+
+  <span class="ice-c">S</span> = constante solaire (1361 W/m²)
+  <span class="life-c">α</span> = albédo (0.30 actuellement)
+  <span class="hl">T</span> = température d'équilibre ≈ 255 K
+
+Avec effet de serre : T_surface ≈ 288 K
+→ équilibre instable car <span class="death-c">α varie avec T</span></pre>
+      </div>
+      <div class="fblock">
+        <span class="flabel" style="color:var(--ice)">Cosmologie — équations de Friedmann</span>
+        <pre><span class="hl">Expansion de l'univers</span> :
+  (ȧ/a)² = 8πGρ/3 − k/a²
+
+  <span class="ice-c">ρ_matière</span> ∝ a⁻³  (se dilue)
+  <span class="ice-c">ρ_radiation</span> ∝ a⁻⁴ (se dilue + rougit)
+  <span class="life-c">ρ_Λ</span> = const   (énergie sombre)
+
+Équilibre <span class="hl">instable</span> :
+  → expansion accélérée inexorable
+  → aucun mécanisme de rappel connu</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     SYNTHÈSE FINALE
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="ch6">
+  <div class="inner">
+    <div class="chapter-num">Synthèse holistique</div>
+    <h2>Ce que toutes<br><em>les échelles partagent</em></h2>
+
+    <p>À travers six ordres de grandeur, un même motif structural se répète. Ce n'est pas
+    une métaphore : c'est une <em>loi de la complexité</em>.</p>
+
+    <div class="synthesis-block fade-in">
+      <div class="synth-row">
+        <div class="synth-icon">⚡</div>
+        <div class="synth-text">
+          <strong>L'équilibre instable nécessite un flux constant d'énergie.</strong>
+          Cellule, organisme, société, biosphère : tous consomment de l'énergie pour
+          maintenir leur structure hors d'équilibre. Couper le flux, c'est laisser l'entropie gagner.
+        </div>
+      </div>
+      <div class="synth-row">
+        <div class="synth-icon">↻</div>
+        <div class="synth-text">
+          <strong>La stabilité est toujours active, jamais passive.</strong>
+          Elle repose sur des boucles de rétroaction négative qui corrigent en permanence
+          les déviations. Le repos absolu n'existe pas dans les systèmes vivants.
+        </div>
+      </div>
+      <div class="synth-row">
+        <div class="synth-icon">⑂</div>
+        <div class="synth-text">
+          <strong>Les bifurcations sont les moments créateurs.</strong>
+          Chaque point d'instabilité est aussi un point de choix. L'évolution biologique,
+          les révolutions, les crises personnelles : ce sont des bifurcations qui ouvrent
+          un espace de possibles que l'équilibre stable fermait.
+        </div>
+      </div>
+      <div class="synth-row">
+        <div class="synth-icon">∞</div>
+        <div class="synth-text">
+          <strong>L'instabilité est la condition de la richesse.</strong>
+          Un système parfaitement stable est un système mort. La complexité, la diversité,
+          la conscience, l'art — tout cela émerge précisément parce que les systèmes
+          ne sont pas à l'équilibre.
+        </div>
+      </div>
+      <div class="synth-row">
+        <div class="synth-icon">◎</div>
+        <div class="synth-text">
+          <strong>La mort n'est pas l'opposé de la vie — elle en est la condition.</strong>
+          Sans apoptose, pas de développement embryonnaire. Sans extinction, pas d'évolution.
+          Sans finitude, pas de sens. La mort est l'attracteur vers lequel toute vie penche,
+          et c'est cette pente qui lui donne sa forme.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     MÉDITATION FINALE
+═══════════════════════════════════════════════════════ -->
+<section class="chapter" id="finale">
+  <div class="inner" style="text-align:center;">
+    <div class="chapter-num" style="justify-content:center;">Méditation finale</div>
+    <h2>L'équation de<br><em>toute existence</em></h2>
+
+    <p style="text-align:center; margin: 0 auto 1.5rem; max-width:60ch;">
+      Si l'on devait réduire la condition de tout système vivant à une seule expression,
+      ce serait celle-ci :
+    </p>
+
+    <span class="final-eq" id="final-eq">
+      Vie  =  ∫ [Énergie × Correction × Temps]  dt<br>
+      <br>
+      sous la contrainte :  Entropie(t) → ∞<br>
+      et la condition :  δx(t) ~ e<sup style="font-size:0.8em">σt</sup>,  σ > 0
+    </span>
+
+    <p style="text-align:center; margin: 0 auto 1.5rem; max-width:58ch;">
+      Exister, c'est intégrer dans le temps un effort de correction contre une divergence
+      inéluctable. La vie n'est pas une lutte contre la mort — elle est une <em>danse avec elle</em>.
+    </p>
+
+    <p style="text-align:center; margin: 0 auto; max-width:52ch; color:var(--muted); font-style:italic; font-size:1rem;">
+      Et comme tout équilibre instable, elle est d'autant plus belle qu'elle tient
+      malgré tout — et pour un temps seulement.
+    </p>
+
+    <div class="ornament" style="margin-top:3rem;">· · ·</div>
+  </div>
+</section>
+
+<footer>
+  <p>Synthèse holistique — Systèmes en équilibre instable · Approche formelle, narrative & visuelle · Toutes échelles</p>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════
+   COSMOS PARTICLES
+══════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('cosmos');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initParticles() {
+    particles = [];
+    const n = Math.floor(W * H / 14000);
+    for (let i = 0; i < n; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.2,
+        vx: (Math.random() - 0.5) * 0.08,
+        vy: (Math.random() - 0.5) * 0.08,
+        a: Math.random() * 0.5 + 0.05,
+        color: Math.random() < 0.15
+          ? (Math.random() < 0.5 ? '#5ecf8a' : '#d4a843')
+          : '#ffffff'
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.a;
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+
+  resize(); initParticles(); draw();
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+})();
+
+/* ══════════════════════════════════════════
+   NAV DOTS
+══════════════════════════════════════════ */
+const chapters = ['ch0','ch1','ch2','ch3','ch4','ch5','ch6'];
+const dotsContainer = document.getElementById('nav-dots');
+chapters.forEach((id, i) => {
+  const d = document.createElement('div');
+  d.className = 'scale-dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  dotsContainer.appendChild(d);
+});
+
+/* ══════════════════════════════════════════
+   TENSION BAR ANIMATION
+══════════════════════════════════════════ */
+let tensionDir = 1;
+let tensionVal = 50;
+const tensionStates = [
+  'équilibre instable', 'vie dominante', 'tension maximale',
+  'entropie croissante', 'retour à l\'équilibre', 'bifurcation imminente'
+];
+let tsIdx = 0;
+
+setInterval(() => {
+  tensionVal += tensionDir * (Math.random() * 3 + 1);
+  if (tensionVal > 72 || tensionVal < 28) tensionDir *= -1;
+  document.getElementById('tbar-life').style.width = tensionVal + '%';
+  document.getElementById('tbar-death').style.width = (100 - tensionVal) + '%';
+  if (Math.random() < 0.15) {
+    tsIdx = (tsIdx + 1) % tensionStates.length;
+    document.getElementById('tension-state').textContent = tensionStates[tsIdx];
+  }
+}, 600);
+
+/* ══════════════════════════════════════════
+   LIFE ARC CANVAS
+══════════════════════════════════════════ */
+(function drawLifeArc() {
+  const canvas = document.getElementById('life-arc-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  canvas.height = 220 * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const W = canvas.offsetWidth, H = 220;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 80) {
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+
+  const phases = [
+    { label: 'Naissance', x: 0.05, desc: 'Vulnérabilité max.' },
+    { label: 'Enfance', x: 0.18, desc: 'Apprentissage' },
+    { label: 'Adolescence', x: 0.3, desc: 'Bifurcation' },
+    { label: 'Adulte', x: 0.5, desc: 'Équilibre actif' },
+    { label: 'Crise', x: 0.6, desc: 'Perturbation' },
+    { label: 'Maturité', x: 0.72, desc: 'Sagesse' },
+    { label: 'Vieillesse', x: 0.85, desc: 'Entropie' },
+    { label: 'Mort', x: 0.97, desc: 'Équilibre final' },
+  ];
+
+  // Life vitality curve
+  function vitalityAt(t) {
+    if (t < 0.05) return 0.3 + t * 6;
+    if (t < 0.3)  return 0.6 + (t - 0.05) * 1.2;
+    if (t < 0.5)  return 0.9 + Math.sin((t - 0.3) * 12) * 0.08;
+    if (t < 0.6)  return 0.88 - (t - 0.5) * 0.6;
+    if (t < 0.72) return 0.82 + Math.sin((t - 0.6) * 8) * 0.05;
+    if (t < 0.97) return 0.82 - Math.pow(t - 0.72, 1.5) * 2.5;
+    return 0.05;
+  }
+
+  // Entropy curve
+  function entropyAt(t) {
+    return 0.05 + t * 0.65 + Math.pow(t, 2) * 0.3;
+  }
+
+  const margin = { l: 20, r: 20, t: 30, b: 50 };
+  const pw = W - margin.l - margin.r;
+  const ph = H - margin.t - margin.b;
+
+  function toXY(t, v) {
+    return { x: margin.l + t * pw, y: margin.t + (1 - v) * ph };
+  }
+
+  // Entropy gradient fill
+  const steps = 120;
+  for (let i = 0; i < steps; i++) {
+    const t0 = i / steps, t1 = (i + 1) / steps;
+    const p0 = toXY(t0, entropyAt(t0));
+    const p1 = toXY(t1, entropyAt(t1));
+    const base = margin.t + ph;
+    ctx.beginPath();
+    ctx.moveTo(p0.x, base);
+    ctx.lineTo(p0.x, p0.y);
+    ctx.lineTo(p1.x, p1.y);
+    ctx.lineTo(p1.x, base);
+    ctx.closePath();
+    ctx.fillStyle = `rgba(207,94,94,${0.04 + (t0 * 0.08)})`;
+    ctx.fill();
+  }
+
+  // Vitality gradient fill
+  for (let i = 0; i < steps; i++) {
+    const t0 = i / steps, t1 = (i + 1) / steps;
+    const p0 = toXY(t0, vitalityAt(t0));
+    const p1 = toXY(t1, vitalityAt(t1));
+    const base = margin.t + ph;
+    ctx.beginPath();
+    ctx.moveTo(p0.x, base);
+    ctx.lineTo(p0.x, p0.y);
+    ctx.lineTo(p1.x, p1.y);
+    ctx.lineTo(p1.x, base);
+    ctx.closePath();
+    ctx.fillStyle = `rgba(94,207,138,${0.06 - t0 * 0.05})`;
+    ctx.fill();
+  }
+
+  // Entropy line
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const p = toXY(t, entropyAt(t));
+    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+  }
+  ctx.strokeStyle = 'rgba(207,94,94,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Vitality line
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const p = toXY(t, vitalityAt(t));
+    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+  }
+  ctx.strokeStyle = 'rgba(94,207,138,0.85)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Phase markers
+  phases.forEach(ph => {
+    const v = vitalityAt(ph.x);
+    const p = toXY(ph.x, v);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#d4a843';
+    ctx.fill();
+    ctx.fillStyle = 'rgba(212,168,67,0.7)';
+    ctx.font = '9px "Martian Mono"';
+    ctx.textAlign = 'center';
+    ctx.fillText(ph.label, p.x, H - 6);
+  });
+
+  // Legend
+  ctx.font = '9px "Martian Mono"';
+  ctx.fillStyle = 'rgba(94,207,138,0.8)';
+  ctx.textAlign = 'left';
+  ctx.fillText('── Vitalité', W - 120, 18);
+  ctx.fillStyle = 'rgba(207,94,94,0.8)';
+  ctx.fillText('── Entropie', W - 120, 32);
+})();
+
+/* ══════════════════════════════════════════
+   EQUILIBRIUM SIMULATOR
+══════════════════════════════════════════ */
+function updateEquilibrium() {
+  const h = parseInt(document.getElementById('s-homeostase').value);
+  const p = parseInt(document.getElementById('s-perturbation').value);
+  const a = parseInt(document.getElementById('s-age').value);
+
+  document.getElementById('v-homeostase').textContent = h;
+  document.getElementById('v-perturbation').textContent = p;
+  document.getElementById('v-age').textContent = a;
+
+  const stability = h * 0.6 - p * 0.55 - a * 0.2;
+  const status = document.getElementById('eq-status');
+
+  if (stability > 20) {
+    status.textContent = 'ÉTAT : ÉQUILIBRE MAINTENU — Homéostasie robuste';
+    status.style.color = 'var(--life)';
+  } else if (stability > -5) {
+    status.textContent = 'ÉTAT : ÉQUILIBRE FRAGILE — Correction active nécessaire';
+    status.style.color = 'var(--gold)';
+  } else if (stability > -25) {
+    status.textContent = 'ÉTAT : DÉSÉQUILIBRE — Risque de basculement pathologique';
+    status.style.color = '#cf8a5e';
+  } else {
+    status.textContent = 'ÉTAT : EFFONDREMENT — Entropie dominante';
+    status.style.color = 'var(--death)';
+  }
+
+  drawEquilibrium(h / 100, p / 100, a / 100);
+}
+
+function drawEquilibrium(h, p, a) {
+  const canvas = document.getElementById('equilibrium-canvas');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = 180 * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = canvas.offsetWidth, H = 180;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const stability = h * 0.6 - p * 0.55 - a * 0.2;
+  const amplitude = Math.max(0.05, p * 0.6 + a * 0.3 - h * 0.4);
+  const freq = 2 + p * 3;
+  const decay = Math.max(-0.5, h * 1.2 - p * 0.8 - a * 0.4);
+
+  const cx = W / 2, cy = H / 2;
+  const color = stability > 20 ? '#5ecf8a' :
+                stability > -5 ? '#d4a843' :
+                stability > -25 ? '#cf8a5e' : '#cf5e5e';
+
+  // Potential well
+  ctx.beginPath();
+  for (let x = -W/2; x < W/2; x += 2) {
+    const t = x / W;
+    const well = stability > 10
+      ? 0.3 * (t * t * 4)
+      : stability > -10
+      ? -0.08 + 0.05 * Math.abs(t) * 4
+      : -0.12 * (1 - t * t * 2);
+    const y = cy - well * H * 0.7;
+    x === -W/2 ? ctx.moveTo(cx + x, y) : ctx.lineTo(cx + x, y);
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Trajectory
+  const nPts = 200;
+  ctx.beginPath();
+  for (let i = 0; i < nPts; i++) {
+    const t = i / nPts;
+    const x = margin_l + t * (W - 40);
+    const env = amplitude * Math.exp(decay * t);
+    const y = cy + env * Math.sin(freq * Math.PI * 2 * t) * (H * 0.38);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.85;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Equilibrium line
+  ctx.beginPath();
+  ctx.moveTo(20, cy);
+  ctx.lineTo(W - 20, cy);
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 6]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Ball position
+  const ballT = 0.85;
+  const env = amplitude * Math.exp(decay * ballT);
+  const ballX = 20 + ballT * (W - 40);
+  const ballY = cy + env * Math.sin(freq * Math.PI * 2 * ballT) * (H * 0.38);
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, 5, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+const margin_l = 20;
+updateEquilibrium();
+
+/* ══════════════════════════════════════════
+   SCROLL REVEAL + NAV DOTS UPDATE
+══════════════════════════════════════════ */
+const reveals = document.querySelectorAll('.fade-in');
+const chapterEls = chapters.map(id => document.getElementById(id));
+const dots = document.querySelectorAll('.scale-dot');
+
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+reveals.forEach(el => revealObs.observe(el));
+
+const chapterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = chapterEls.indexOf(e.target);
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+  });
+}, { threshold: 0.4 });
+chapterEls.forEach(el => { if (el) chapterObs.observe(el); });
+</script>
+</body>
+</html>
