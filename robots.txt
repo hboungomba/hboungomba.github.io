@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://hboungomba.github.io/sitemap.xml
