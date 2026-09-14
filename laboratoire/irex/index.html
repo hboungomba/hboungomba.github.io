@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IREX — évaluer le risque de verrouillage avant de signer — Hans Boungomba</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icone-180.png">
+<meta name="theme-color" content="#f1ede4">
+
+<meta name="description" content="Indice de risque ex-ante : un calculateur qui estime le risque de verrouillage d'un accord commercial avant sa signature, calibré sur dix-huit cas historiques.">
+<link rel="canonical" href="https://hansboungomba.fr/laboratoire/irex/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IREX — évaluer le risque de verrouillage avant de signer">
+<meta property="og:description" content="Un indice qui se calcule avant signature, pas après. Dix-huit cas historiques pour le valider.">
+<meta property="og:url" content="https://hansboungomba.fr/laboratoire/irex/">
+<meta property="og:locale" content="fr_FR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f1ede4; --paper-2:#e8e3d6; --paper-3:#dcd5c2;
+  --ink:#1a1f2c; --ink-2:#3a3f4a; --ink-3:#6a6f7a;
+  --rule:#c8c1ad; --rule-soft:#d8d2bf;
+  --copper:#b85c3b; --copper-d:#8a4128;
+  --teal:#2e5d5d; --gold:#8a6d1f; --bord:#7e3a4e; --olive:#5a6b2e;
+  --serif:"Source Serif 4",Georgia,serif;
+  --sans:"Inter",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+.narrow{max-width:66ch}
+:focus-visible{outline:2px solid var(--copper);outline-offset:3px}
+
+header.mast{padding:62px 0 34px;border-bottom:1px solid var(--rule)}
+h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.08;margin:0 0 16px;
+  letter-spacing:-.02em;max-width:19ch;font-weight:600}
+.accroche{font-size:clamp(1.2rem,2.4vw,1.5rem);font-style:italic;color:var(--copper-d);
+  margin:0 0 18px;max-width:34ch;line-height:1.3}
+.lede{font-size:1.1rem;color:var(--ink-2);max-width:64ch;margin:0 0 12px}
+
+section{padding:50px 0;border-bottom:1px solid var(--rule)}
+h2{font-size:1.5rem;margin:0 0 14px;font-weight:600;letter-spacing:-.014em}
+h3{font-size:1.05rem;margin:0 0 6px;font-weight:600}
+p{max-width:66ch;margin:0 0 15px}
+
+/* ── calculateur ── */
+.calc{display:grid;grid-template-columns:1fr 330px;gap:44px;align-items:start}
+.group{border-top:1px solid var(--rule);padding-top:18px;margin-bottom:26px}
+.group>h3{font-family:var(--sans);font-size:13px;color:var(--copper-d);
+  letter-spacing:.03em;text-transform:uppercase;margin-bottom:4px}
+.group>.hint{font-size:.93rem;color:var(--ink-3);margin:0 0 16px;max-width:60ch}
+
+.q{margin-bottom:17px}
+.q label{display:block;font-size:.97rem;margin-bottom:5px}
+.q .row{display:flex;align-items:center;gap:13px}
+.q input[type=range]{flex:1;accent-color:var(--copper-d);min-width:0}
+.q output{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);
+  min-width:2.6em;text-align:right}
+.q .anchors{display:flex;justify-content:space-between;font-family:var(--sans);
+  font-size:11.5px;color:var(--ink-3);margin-top:3px}
+
+/* ── résultat ── */
+.result{position:sticky;top:18px;border:1px solid var(--rule);background:var(--paper-2);
+  padding:24px 22px}
+.gauge-num{font-size:3.3rem;line-height:1;font-weight:600;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums}
+.verdict{font-family:var(--sans);font-size:13px;letter-spacing:.04em;text-transform:uppercase;
+  margin-top:6px;font-weight:500}
+.bar{height:9px;background:var(--paper-3);margin:16px 0 6px;position:relative;
+  border:1px solid var(--rule)}
+.bar .fill{height:100%;background:var(--copper-d);transition:width .18s}
+.bandlabels{display:flex;justify-content:space-between;font-family:var(--mono);
+  font-size:10px;color:var(--ink-3)}
+.readout{font-family:var(--mono);font-size:12px;color:var(--ink-2);margin-top:18px;
+  border-top:1px solid var(--rule-soft);padding-top:14px;line-height:1.9}
+.readout b{font-weight:500;color:var(--ink)}
+.interp{font-size:.95rem;color:var(--ink-2);margin-top:16px;border-top:1px solid var(--rule-soft);
+  padding-top:14px}
+.interp p{margin:0;max-width:none}
+
+/* ── graphiques ── */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:8px}
+figure{margin:0}
+figcaption{font-family:var(--sans);font-size:12.5px;color:var(--ink-3);margin-top:9px;
+  line-height:1.45}
+svg.plot{width:100%;height:auto;border:1px solid var(--rule);background:var(--paper)}
+
+table{border-collapse:collapse;width:100%;font-size:.94rem;margin-top:20px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule-soft)}
+th{font-family:var(--sans);font-size:12px;color:var(--ink-3);font-weight:500;
+  border-bottom-color:var(--rule)}
+td.num{font-family:var(--mono);font-size:12.5px;text-align:right}
+
+.warn{border-left:2px solid var(--bord);background:var(--paper-2);padding:19px 22px;
+  margin:24px 0;font-size:.98rem;color:var(--ink-2)}
+.warn p{margin:0 0 10px;max-width:none}
+.warn p:last-child{margin:0}
+
+.cta{display:flex;gap:13px;flex-wrap:wrap;margin-top:28px}
+.cta a{font-family:var(--sans);font-size:15px;padding:11px 22px;text-decoration:none;
+  background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
+.cta a.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.cta a:hover{background:var(--copper-d);border-color:var(--copper-d);color:var(--paper)}
+
+footer.f{padding:30px 0 54px;font-family:var(--sans);font-size:13.5px;color:var(--ink-3)}
+
+@media (max-width:880px){
+  body{font-size:16px}
+  .wrap{padding:0 18px}
+  .calc{grid-template-columns:1fr;gap:26px}
+  .result{position:static}
+  .charts{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div data-labbar style="font-family:'Inter',system-ui,sans-serif;font-size:13px;
+ display:flex;gap:18px;align-items:center;flex-wrap:wrap;
+ padding:10px 22px;background:#1a1f2c;color:#dcd5c2;position:relative;z-index:999">
+ <a href="/" style="color:#f1ede4;text-decoration:none;font-weight:500">Hans Boungomba</a>
+ <a href="/laboratoire/" style="color:#dcd5c2;text-decoration:none">Laboratoire</a>
+ <span style="color:#6a6f7a">La promesse et l'emprise · tome 3</span>
+ <a href="/livres/la-promesse-et-lemprise/tome-3/" style="margin-left:auto;color:#e8a07f;text-decoration:none">Le livre dont vient cette figure</a>
+</div>
+
+<header class="mast">
+  <div class="wrap">
+    <h1>IREX — le risque de verrouillage, avant de signer</h1>
+    <p class="accroche">On sait dire, dix ans après, qu'un accord a mal tourné. La question
+      utile se pose avant.</p>
+    <p class="lede">L'indice de risque ex-ante estime la dépendance vers laquelle un accord
+      tend à l'équilibre, à partir de deux paramètres seulement : l'asymétrie de l'accord et
+      la qualité de l'option extérieure de la partie faible.</p>
+    <p class="lede">Renseignez les sept questions ci-dessous pour un accord réel ou
+      hypothétique. L'indice se recalcule à chaque mouvement.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="calc">
+      <div>
+        <div class="group">
+          <h3>Asymétrie de l'accord — α</h3>
+          <p class="hint">Ce qui rend une partie structurellement plus exposée que l'autre.
+            Quatre composantes, pondérées également.</p>
+
+          <div class="q">
+            <label for="a1">Part du partenaire dans les exportations de la partie faible</label>
+            <div class="row"><input type="range" id="a1" min="0" max="1" step="0.01" value="0.65"><output for="a1">0,65</output></div>
+            <div class="anchors"><span>marginale</span><span>débouché principal</span></div>
+          </div>
+
+          <div class="q">
+            <label for="a2">Concentration des exportations sur peu de produits</label>
+            <div class="row"><input type="range" id="a2" min="0" max="1" step="0.01" value="0.70"><output for="a2">0,70</output></div>
+            <div class="anchors"><span>diversifiées</span><span>un ou deux produits</span></div>
+          </div>
+
+          <div class="q">
+            <label for="a3">Écart de taille économique entre les parties</label>
+            <div class="row"><input type="range" id="a3" min="0" max="1" step="0.01" value="0.60"><output for="a3">0,60</output></div>
+            <div class="anchors"><span>comparable</span><span>rapport de 1 à 50</span></div>
+          </div>
+
+          <div class="q">
+            <label for="a4">Contraintes sur les instruments de politique économique</label>
+            <div class="row"><input type="range" id="a4" min="0" max="1" step="0.01" value="0.65"><output for="a4">0,65</output></div>
+            <div class="anchors"><span>aucune</span><span>tarifs, normes, arbitrage</span></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>Option extérieure — θ</h3>
+          <p class="hint">Ce qui rend le refus, ou la sortie, soutenable. Trois composantes,
+            pondérées également.</p>
+
+          <div class="q">
+            <label for="t1">Existence de débouchés alternatifs mobilisables</label>
+            <div class="row"><input type="range" id="t1" min="0" max="1" step="0.01" value="0.35"><output for="t1">0,35</output></div>
+            <div class="anchors"><span>aucun</span><span>plusieurs, accessibles</span></div>
+          </div>
+
+          <div class="q">
+            <label for="t2">Taille du marché intérieur et capacité d'absorption</label>
+            <div class="row"><input type="range" id="t2" min="0" max="1" step="0.01" value="0.35"><output for="t2">0,35</output></div>
+            <div class="anchors"><span>négligeable</span><span>substantielle</span></div>
+          </div>
+
+          <div class="q">
+            <label for="t3">Coalition régionale crédible et disciplinée</label>
+            <div class="row"><input type="range" id="t3" min="0" max="1" step="0.01" value="0.35"><output for="t3">0,35</output></div>
+            <div class="anchors"><span>inexistante</span><span>tient face à la défection</span></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="result" aria-live="polite">
+        <div class="gauge-num" id="irex">—</div>
+        <div class="verdict" id="verdict">—</div>
+        <div class="bar"><div class="fill" id="fill" style="width:0%"></div></div>
+        <div class="bandlabels"><span>0</span><span>0,30</span><span>0,55</span><span>0,75</span><span>1</span></div>
+        <div class="readout">
+          α effectif&nbsp;: <b id="alpha">—</b><br>
+          θ effectif&nbsp;: <b id="theta">—</b><br>
+          D* (équilibre)&nbsp;: <b id="dstar">—</b><br>
+          Périodes jusqu'à 90 % de D*&nbsp;: <b id="thalf">—</b>
+        </div>
+        <div class="interp"><p id="interp">—</p></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Ce que l'indice regarde</h2>
+    <div class="charts">
+      <figure>
+        <svg class="plot" id="traj" viewBox="0 0 480 300" role="img"
+             aria-label="Trajectoire de la dépendance sur trente périodes"></svg>
+        <figcaption>Trajectoire D(t) sur trente périodes, à partir d'une dépendance initiale
+          de 0,20. La courbe converge vers D*, jamais brutalement : c'est l'objet même de
+          l'indice, repérer une destination que la première année ne laisse pas voir.</figcaption>
+      </figure>
+      <figure>
+        <svg class="plot" id="scatter" viewBox="0 0 480 300" role="img"
+             aria-label="Validation rétrospective sur dix-huit accords historiques"></svg>
+        <figcaption>Validation rétrospective : dix-huit accords, IREX calculé ex-ante en
+          abscisse, dépendance effectivement observée en ordonnée. La diagonale est la
+          prédiction parfaite. Votre accord apparaît en cuivre.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow">
+    <h2>Le modèle, en clair</h2>
+    <p>La dépendance d'une période à l'autre suit une équation de récurrence simple. Elle
+      persiste en partie d'elle-même, s'accroît avec l'asymétrie de l'accord, décroît avec la
+      qualité de l'option extérieure :</p>
+    <p style="font-family:var(--mono);font-size:14.5px;background:var(--paper-2);
+       padding:15px 18px;border-left:2px solid var(--rule)">
+      D<sub>t+1</sub> = β·D<sub>t</sub> + γ·α − δ·θ<br><br>
+      D* = (γ·α − δ·θ) / (1 − β)
+    </p>
+    <p>β est la persistance — la part de la dépendance d'aujourd'hui qui se reconduit demain
+      sans que personne n'agisse. C'est le paramètre décisif : à β = 0,82, l'équilibre vaut
+      plus de cinq fois l'impulsion annuelle. Autrement dit, un accord faiblement asymétrique
+      produit tout de même une dépendance élevée, simplement parce que rien ne se défait tout
+      seul.</p>
+    <p>γ convertit l'asymétrie en dépendance, δ mesure ce que l'option extérieure en retire.
+      L'indice n'est que D* ramené à l'intervalle [0, 1].</p>
+
+    <h2 style="margin-top:40px">Bandes de lecture</h2>
+    <table>
+      <thead><tr><th>IREX</th><th>Lecture</th><th>Ce qu'il reste à décider</th></tr></thead>
+      <tbody>
+        <tr><td class="num">&lt; 0,30</td><td>Risque faible</td>
+            <td>L'accord se discute sur ses mérites propres.</td></tr>
+        <tr><td class="num">0,30 – 0,55</td><td>Risque modéré</td>
+            <td>Clauses de revoyure et de sauvegarde à négocier sérieusement, pas pour la forme.</td></tr>
+        <tr><td class="num">0,55 – 0,75</td><td>Risque élevé</td>
+            <td>La sortie doit être chiffrée avant signature, pas après.</td></tr>
+        <tr><td class="num">&gt; 0,75</td><td>Verrouillage probable</td>
+            <td>Construire l'option extérieure d'abord. Signer ensuite, ou pas.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top:40px">Ce que cet indice ne fait pas</h2>
+    <div class="warn">
+      <p><strong>Les coefficients sont illustratifs.</strong> β, γ et δ proviennent d'une
+        estimation exploratoire, pas d'une calibration publiée et répliquée. Traitez les
+        ordres de grandeur, jamais la deuxième décimale.</p>
+      <p><strong>Les entrées sont des jugements.</strong> α et θ ne se lisent pas dans une
+        base de données : ils s'estiment. Deux analystes compétents obtiendront des valeurs
+        différentes. C'est une faiblesse assumée — et la raison pour laquelle les sept
+        questions sont explicites plutôt que dissimulées dans un score composite.</p>
+      <p><strong>L'ajustement est correct, pas excellent.</strong> Sur les dix-huit cas,
+        l'erreur absolue moyenne est de 0,14. Le modèle se trompe de deux manières
+        opposées, toutes deux visibles sur le nuage. Il <em>sature</em> en haut : les cas
+        les plus asymétriques sont tous prédits à 1,00 alors que la dépendance observée
+        plafonne plus bas — Versailles et l'accord Rwanda-Royaume-Uni sont les deux
+        écarts les plus importants. Et il <em>sous-estime</em> en bas : sur les accords
+        entre parties de position comparable, comme la ZLECAf ou l'ASEAN, il annonce une
+        dépendance quasi nulle là où elle est faible mais réelle.</p>
+      <p>Autrement dit, l'indice discrimine bien dans la zone intermédiaire — celle où la
+        décision se joue — et mal aux deux extrêmes, où elle ne se joue pas.</p>
+      <p><strong>Un indice n'est pas un verdict.</strong> Un IREX élevé ne dit pas de refuser :
+        il dit où porter l'effort de négociation, et ce qu'il faut avoir construit avant de
+        s'asseoir à la table.</p>
+    </div>
+
+    <div class="cta">
+      <a href="/livres/la-promesse-et-lemprise/tome-3/">Le tome 3</a>
+      <a class="ghost" href="/laboratoire/jeu-commercial/">Le jeu commercial</a>
+      <a class="ghost" href="/laboratoire/atlas-reseaux/">L'atlas des réseaux</a>
+    </div>
+  </div>
+</section>
+
+<footer class="f">
+  <div class="wrap">Indice de risque ex-ante, chapitre 5 du tome 3 de
+    <em>La promesse et l'emprise</em> — © 2026 Hans Boungomba.</div>
+</footer>
+
+<script src="/assets/data/networks.js"></script>
+<script>
+(function () {
+  var B = 0.82, G = 0.45, D = 0.30, SCALE = 1.4, D0 = 0.20, T = 30;
+  var A = ["a1","a2","a3","a4"], TH = ["t1","t2","t3"];
+  var $ = function (id) { return document.getElementById(id); };
+  var fr = function (x, n) { return x.toFixed(n === undefined ? 2 : n).replace(".", ","); };
+
+  function mean(ids) {
+    var s = 0;
+    ids.forEach(function (i) { s += parseFloat($(i).value); });
+    return s / ids.length;
+  }
+  function dstar(a, t) { return (G * a - D * t) / (1 - B); }
+  function irex(a, t) {
+    var d = dstar(a, t);
+    return d <= 0 ? 0 : Math.min(1, Math.max(0, d / SCALE));
+  }
+  function band(v) {
+    if (v < 0.30) return ["Risque faible", "var(--olive)"];
+    if (v < 0.55) return ["Risque modéré", "var(--gold)"];
+    if (v < 0.75) return ["Risque élevé", "var(--copper-d)"];
+    return ["Verrouillage probable", "var(--bord)"];
+  }
+  function interp(v, a, t) {
+    if (v < 0.30) return "À ces paramètres, l'option extérieure compense l'asymétrie. " +
+      "Le risque de verrouillage n'est pas le sujet principal de cette négociation.";
+    if (v < 0.55) return "L'accord tend vers une dépendance modérée mais durable. " +
+      "Les clauses de sortie et de revoyure décideront de ce qui se passe à partir de la dixième année.";
+    if (v < 0.75) return "La trajectoire mène à une dépendance élevée. " +
+      (t < 0.4 ? "L'option extérieure est le paramètre le plus rentable à travailler : " +
+                 "chaque point gagné sur θ vaut deux tiers de point perdu sur α."
+               : "L'asymétrie de l'accord lui-même doit être réduite ; l'option extérieure ne suffira pas.");
+    return "Verrouillage probable. À ce niveau, la question n'est plus de savoir si l'accord " +
+      "est avantageux à court terme — il l'est presque toujours — mais si la sortie restera " +
+      "possible dans dix ans, et à quel prix.";
+  }
+
+  function trajectory(a, t) {
+    var v = [D0];
+    for (var i = 1; i <= T; i++) {
+      v.push(Math.max(0, Math.min(1.5, B * v[i-1] + G * a - D * t)));
+    }
+    return v;
+  }
+  function periodsTo90(a, t) {
+    var d = dstar(a, t);
+    if (d <= D0) return "—";
+    var v = D0;
+    for (var i = 1; i <= 200; i++) {
+      v = B * v + G * a - D * t;
+      if (v >= 0.9 * d) return i;
+    }
+    return "> 200";
+  }
+
+  var NS = "http://www.w3.org/2000/svg";
+  function e(tag, attrs, parent, text) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (text !== undefined) n.textContent = text;
+    parent.appendChild(n);
+    return n;
+  }
+  function frame(svg, xl, yl) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var L = 44, R = 14, TT = 18, BT = 38;
+    e("rect", { x: L, y: TT, width: 480-L-R, height: 300-TT-BT,
+                fill: "none", stroke: "var(--rule-soft)" }, svg);
+    e("text", { x: (480+L-R)/2, y: 292, "text-anchor": "middle",
+                "font-family": "Inter, sans-serif", "font-size": 10.5,
+                fill: "var(--ink-3)" }, svg, xl);
+    e("text", { x: 13, y: (300-BT+TT)/2, "text-anchor": "middle",
+                transform: "rotate(-90 13 " + ((300-BT+TT)/2) + ")",
+                "font-family": "Inter, sans-serif", "font-size": 10.5,
+                fill: "var(--ink-3)" }, svg, yl);
+    return { L: L, R: R, T: TT, B: BT, w: 480-L-R, h: 300-TT-BT };
+  }
+
+  function drawTraj(a, t) {
+    var svg = $("traj"), f = frame(svg, "Périodes", "Dépendance D(t)");
+    var v = trajectory(a, t), max = 1.0;
+    var X = function (i) { return f.L + (i / T) * f.w; };
+    var Y = function (y) { return f.T + f.h - Math.min(y, max) / max * f.h; };
+    [0.25, 0.5, 0.75, 1].forEach(function (g) {
+      e("line", { x1: f.L, x2: f.L+f.w, y1: Y(g), y2: Y(g),
+                  stroke: "var(--rule-soft)", "stroke-dasharray": "2 4" }, svg);
+      e("text", { x: f.L-6, y: Y(g)+3.5, "text-anchor": "end",
+                  "font-family": "JetBrains Mono, monospace", "font-size": 9,
+                  fill: "var(--ink-3)" }, svg, fr(g, 2));
+    });
+    var d = Math.min(dstar(a, t), max);
+    if (d > 0) {
+      e("line", { x1: f.L, x2: f.L+f.w, y1: Y(d), y2: Y(d),
+                  stroke: "var(--bord)", "stroke-width": 1, "stroke-dasharray": "5 3" }, svg);
+      e("text", { x: f.L+f.w-4, y: Y(d)-5, "text-anchor": "end",
+                  "font-family": "JetBrains Mono, monospace", "font-size": 9,
+                  fill: "var(--bord)" }, svg, "D* = " + fr(dstar(a, t)));
+    }
+    var p = v.map(function (y, i) { return X(i) + "," + Y(y); }).join(" ");
+    e("polyline", { points: p, fill: "none", stroke: "var(--copper-d)",
+                    "stroke-width": 2 }, svg);
+    [0, 10, 20, 30].forEach(function (i) {
+      e("text", { x: X(i), y: 300-f.B+13, "text-anchor": "middle",
+                  "font-family": "JetBrains Mono, monospace", "font-size": 9,
+                  fill: "var(--ink-3)" }, svg, i);
+    });
+  }
+
+  function drawScatter(a, t) {
+    var svg = $("scatter"), f = frame(svg, "IREX calculé (ex-ante)", "Dépendance observée (ex-post)");
+    var X = function (x) { return f.L + x * f.w; };
+    var Y = function (y) { return f.T + f.h - y * f.h; };
+    e("line", { x1: X(0), y1: Y(0), x2: X(1), y2: Y(1),
+                stroke: "var(--ink-3)", "stroke-dasharray": "4 4" }, svg);
+    e("text", { x: X(0.72), y: Y(0.78), "font-family": "Inter, sans-serif",
+                "font-size": 9.5, fill: "var(--ink-3)" }, svg, "prédiction parfaite");
+    [0, 0.5, 1].forEach(function (g) {
+      e("text", { x: f.L-6, y: Y(g)+3.5, "text-anchor": "end",
+                  "font-family": "JetBrains Mono, monospace", "font-size": 9,
+                  fill: "var(--ink-3)" }, svg, fr(g, 1));
+      e("text", { x: X(g), y: 300-f.B+13, "text-anchor": "middle",
+                  "font-family": "JetBrains Mono, monospace", "font-size": 9,
+                  fill: "var(--ink-3)" }, svg, fr(g, 1));
+    });
+    var cases = window.IREX_CASES || [];
+    cases.forEach(function (c) {
+      var px = irex(c.alpha, c.theta);
+      var g = e("g", {}, svg);
+      e("circle", { cx: X(px), cy: Y(c.observed), r: 3.6,
+                    fill: "var(--paper)", stroke: "var(--teal)", "stroke-width": 1.4 }, g);
+      e("title", {}, g, c.label + " — IREX " + fr(px) + " · observé " + fr(c.observed));
+    });
+    var mine = irex(a, t);
+    e("circle", { cx: X(mine), cy: Y(Math.min(mine, 1)), r: 6,
+                  fill: "var(--copper-d)", stroke: "var(--paper)", "stroke-width": 1.6 }, svg);
+    e("text", { x: X(mine), y: Y(Math.min(mine, 1)) - 11, "text-anchor": "middle",
+                "font-family": "Inter, sans-serif", "font-size": 10,
+                fill: "var(--copper-d)" }, svg, "votre accord");
+  }
+
+  function update() {
+    A.concat(TH).forEach(function (id) {
+      $(id).parentNode.querySelector("output").textContent = fr(parseFloat($(id).value));
+    });
+    var a = mean(A), t = mean(TH), v = irex(a, t), b = band(v);
+    $("irex").textContent = fr(v);
+    $("irex").style.color = b[1];
+    $("verdict").textContent = b[0];
+    $("verdict").style.color = b[1];
+    $("fill").style.width = (v * 100) + "%";
+    $("fill").style.background = b[1];
+    $("alpha").textContent = fr(a);
+    $("theta").textContent = fr(t);
+    $("dstar").textContent = fr(Math.max(0, dstar(a, t)));
+    $("thalf").textContent = periodsTo90(a, t);
+    $("interp").textContent = interp(v, a, t);
+    drawTraj(a, t);
+    drawScatter(a, t);
+  }
+
+  A.concat(TH).forEach(function (id) { $(id).addEventListener("input", update); });
+  update();
+})();
+</script>
+</body>
+</html>

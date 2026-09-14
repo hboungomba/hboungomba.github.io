@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cinq autres réseaux de dépendance — Tome 3, annexe — Hans Boungomba</title>
+<meta name="description" content="Monnaies de réserve, chaînes de valeur multicouches, cascade de défauts souverains, points d'étranglement maritimes et treillis de coalitions.">
+<link rel="canonical" href="https://hansboungomba.fr/laboratoire/annexe-reseaux/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cinq autres réseaux de dépendance — Tome 3, annexe">
+<meta property="og:description" content="Monnaies de réserve, chaînes de valeur multicouches, cascade de défauts souverains, points d'étranglement maritimes et treillis de coalitions.">
+<meta property="og:url" content="https://hansboungomba.fr/laboratoire/annexe-reseaux/">
+<meta property="og:locale" content="fr_FR">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icone-180.png">
+<meta name="theme-color" content="#f1ede4">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/lab.css" />
+  <style>
+    /* additions spécifiques à l'annexe */
+    .stage .canvas-pure { position: relative; overflow: hidden; }
+    .stage .canvas-pure svg { display: block; width: 100%; height: 100%; }
+
+    /* A1 — currency lines */
+    .cur-link { fill: none; }
+    .cur-core text.symbol { font-family: var(--serif); font-weight: 500; text-anchor: middle; dominant-baseline: central; }
+    .cur-core text.label  { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; text-anchor: middle; fill: var(--ink-3); }
+    .cur-node text { font-family: var(--mono); font-size: 9px; fill: var(--ink-2); text-anchor: start; dominant-baseline: central; }
+    .cur-node circle { stroke: var(--paper); stroke-width: 1; }
+
+    /* A2 — multiplex layers */
+    .layer-band { fill: #efeada; stroke: var(--rule); stroke-width: 1; }
+    .layer-band.upper { fill: #ece5d1; }
+    .layer-tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; fill: var(--ink-3); }
+    .mux-node circle { stroke: var(--paper); stroke-width: 1.2; }
+    .mux-node text { font-family: var(--mono); font-size: 9.5px; fill: var(--ink-2); text-anchor: middle; dominant-baseline: central;
+      paint-order: stroke; stroke: rgba(251,248,240,.9); stroke-width: 3px; }
+    .mux-flow { fill: none; stroke-opacity: .35; }
+    .mux-flow.hot { stroke: var(--copper-d); stroke-opacity: .55; }
+
+    /* A3 — cascade panels */
+    .cascade-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; height: 100%; }
+    .cascade-grid .panel { border-right: 1px solid var(--rule); position: relative; overflow: hidden; }
+    .cascade-grid .panel:last-child { border-right: none; }
+    .cascade-grid .panel .title {
+      position: absolute; top: 14px; left: 14px;
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .cascade-grid .panel .title strong { color: var(--ink); font-weight: 500; }
+    .cascade-grid .panel .note {
+      position: absolute; bottom: 12px; left: 14px; right: 14px;
+      font-family: var(--serif); font-style: italic; font-size: 12px; color: var(--ink-3); line-height: 1.4;
+    }
+    .casc-node circle { stroke: var(--paper); stroke-width: 1.2; }
+    .casc-node text { font-family: var(--mono); font-size: 9.5px; fill: var(--ink-2); text-anchor: middle; dominant-baseline: central; }
+    .casc-node.solv circle  { fill: #c8d2b8; }
+    .casc-node.stress circle{ fill: #e8c98c; }
+    .casc-node.def circle   { fill: var(--crit); }
+    .casc-edge { fill: none; stroke: var(--ink-2); stroke-opacity: .22; }
+    .casc-edge.active { stroke: var(--crit); stroke-opacity: .7; }
+
+    /* A4 — chokepoints / map */
+    .land { fill: #e4dcc4; stroke: var(--rule); stroke-width: 1; }
+    .sea-arc { fill: none; stroke: var(--teal); stroke-opacity: .45; }
+    .choke {
+      fill: var(--copper);
+      stroke: var(--paper);
+      stroke-width: 1.5;
+    }
+    .choke-label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+      fill: var(--copper-d);
+    }
+    .port-label { font-family: var(--mono); font-size: 9px; fill: var(--ink-3); }
+    .region-label { font-family: var(--serif); font-style: italic; font-size: 14px; fill: var(--ink-2); }
+
+    /* A5 — Hasse */
+    .hasse-edge { fill: none; stroke: var(--ink-3); stroke-opacity: .55; stroke-width: 1; }
+    .hasse-edge.lagrange-ok { stroke: var(--teal-d); stroke-opacity: .6; }
+    .hasse-edge.lagrange-fail { stroke: var(--crit); stroke-opacity: .6; stroke-dasharray: 4 3; }
+    .hasse-node rect { stroke: var(--ink); stroke-width: 1.2; fill: var(--paper); }
+    .hasse-node text.nm { font-family: var(--serif); font-size: 13px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+    .hasse-node text.card { font-family: var(--mono); font-size: 9.5px; fill: var(--ink-3); text-anchor: middle; }
+    .hasse-node.top rect { fill: var(--ink); }
+    .hasse-node.top text.nm { fill: var(--paper); }
+    .hasse-node.top text.card { fill: var(--paper-3); }
+    .ratio-tag {
+      font-family: var(--mono); font-size: 9px; fill: var(--ink-3);
+      text-anchor: middle;
+    }
+    .ratio-tag.fail { fill: var(--crit); }
+
+    .panel-eq {
+      font-family: var(--serif); font-style: italic; font-size: 14px;
+      padding: 10px 14px; background: var(--paper); border-left: 2px solid var(--copper-d);
+      margin-top: 8px; color: var(--ink-2);
+    }
+    .panel-eq .var { color: var(--copper-d); font-style: normal; font-weight: 500; }
+
+    .breadcrumb {
+      max-width: var(--maxw); margin: 0 auto; padding: 18px 48px 0;
+      font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .breadcrumb a { color: var(--ink-3); text-decoration: none; border-bottom: 1px solid transparent; }
+    .breadcrumb a:hover { color: var(--ink); border-bottom-color: var(--copper); }
+  </style>
+</head>
+<body>
+<div data-labbar style="font-family:'Inter',system-ui,sans-serif;font-size:13px;
+ display:flex;gap:18px;align-items:center;flex-wrap:wrap;
+ padding:10px 22px;background:#1a1f2c;color:#dcd5c2;position:relative;z-index:999">
+ <a href="/" style="color:#f1ede4;text-decoration:none;font-weight:500">Hans Boungomba</a>
+ <a href="/laboratoire/" style="color:#dcd5c2;text-decoration:none">Laboratoire</a>
+ <span style="color:#6a6f7a">La promesse et l'emprise · tome 3, annexe</span>
+ <a href="/livres/la-promesse-et-lemprise/tome-3/" style="margin-left:auto;color:#e8a07f;text-decoration:none">Le livre dont vient cette figure</a>
+</div>
+
+
+
+
+
+
+
+<div class="breadcrumb">
+  <a href="/laboratoire/atlas-reseaux/">Atlas principal</a>
+  <span style="padding: 0 10px; color: var(--rule)">/</span>
+  <span style="color: var(--ink-2)">Annexe : autres figures structurelles</span>
+</div>
+
+<header class="masthead">
+  <div class="colophon">
+    <span>TOME 3 · ANNEXE · v1.0</span>
+    <span>5 figures complémentaires · A1–A5</span>
+  </div>
+  <h1>Au-delà du graphe commercial : <em>cinq autres réseaux</em> décrits dans le Tome 3</h1>
+  <p class="lede">
+    L'atlas principal cartographie le réseau commercial. Mais le Tome 3 mobilise plusieurs autres structures pour saisir la dépendance — monnaies de réserve, chaînes de valeur multicouches, dette souveraine, géographie maritime, treillis de coalitions. Ces cinq figures complètent la grammaire visuelle du volume.
+  </p>
+  <div class="meta">
+    <span><strong>Sources.</strong> COFER-FMI · OECD TiVA · UNCTAD-Eora · UNCTAD-MTRANS · DESTA</span>
+    <span><strong>Méthodes.</strong> Chord diagram · graphe multiplex · cascade de défauts · chokepoints · treillis de Hasse</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="inner">
+    <a href="#a1">A1 — Monnaies de réserve</a>
+    <a href="#a2">A2 — Chaînes de valeur (multiplex)</a>
+    <a href="#a3">A3 — Cascade de défauts</a>
+    <a href="#a4">A4 — Points d'étranglement</a>
+    <a href="#a5">A5 — Treillis de coalitions</a>
+  </div>
+</nav>
+
+<!-- ============ A1 ============ -->
+<section class="chapter" id="a1">
+  <div class="head">
+    <div class="num">Figure A1<br/><span style="color:var(--ink-3); letter-spacing:.12em">ch. 1 §1.3.2</span></div>
+    <div>
+      <h2>Réseaux monétaires : la dépendance par la devise de réserve</h2>
+      <p class="intro">À côté du commerce, la monnaie trace ses propres réseaux. Cinq ancres — dollar, euro, yuan, sterling, yen — concentrent l'essentiel des réserves, des facturations et des ancrages de change. Chaque pays est ici relié à ses devises d'ancrage par un fil dont l'épaisseur reproduit la part dans ses réserves officielles (COFER-FMI, 2024). Lorsque deux fils convergent sur un même pays, c'est qu'il vit dans plusieurs monnaies à la fois.</p>
+    </div>
+  </div>
+
+  <div class="stage" id="a1-stage">
+    <div class="canvas-pure">
+      <svg id="a1-svg"></svg>
+    </div>
+    <aside class="sidebar" id="a1-sidebar"></aside>
+  </div>
+</section>
+
+<!-- ============ A2 ============ -->
+<section class="chapter" id="a2">
+  <div class="head">
+    <div class="num">Figure A2<br/><span style="color:var(--ink-3); letter-spacing:.12em">ch. 3 §3.2</span></div>
+    <div>
+      <h2>Graphes multiplex : intrants critiques et biens finaux</h2>
+      <p class="intro">Le commerce mondial n'est pas un graphe, c'est un empilement. La couche supérieure rassemble les <em>intrants critiques</em> — semi-conducteurs, terres rares, lithium, énergie fossile, intrants chimiques — chacun concentré sur quelques pays producteurs. La couche inférieure rassemble les <em>biens finaux</em> où ces intrants convergent : automobile, électronique, défense, équipement médical. Une coupure dans la couche du haut se propage verticalement avant de se diffuser horizontalement.</p>
+    </div>
+  </div>
+
+  <div class="stage" id="a2-stage">
+    <div class="canvas-pure">
+      <svg id="a2-svg"></svg>
+    </div>
+    <aside class="sidebar" id="a2-sidebar"></aside>
+  </div>
+</section>
+
+<!-- ============ A3 ============ -->
+<section class="chapter" id="a3">
+  <div class="head">
+    <div class="num">Figure A3<br/><span style="color:var(--ink-3); letter-spacing:.12em">ch. 3 §3.3</span></div>
+    <div>
+      <h2>Cascade de défauts : la dette souveraine comme réseau dirigé</h2>
+      <p class="intro">Reconstitution stylisée de la crise des dettes souveraines européennes (2010–2012). Les nœuds sont des États ; les arêtes orientées portent l'exposition <em>créancier → débiteur</em> en pourcentage du PIB créancier. Chaque nœud a une <em>capacité d'absorption</em> ; la dépasser fait basculer l'État du vert au jaune (sous tension) puis au rouge (défaut). Les quatre vignettes lisent la cascade tour par tour.</p>
+    </div>
+  </div>
+
+  <div class="stage full" id="a3-stage" style="min-height: 420px">
+    <div class="canvas-pure" style="height: 420px">
+      <div class="cascade-grid" id="a3-grid"></div>
+    </div>
+  </div>
+  <div class="panel-eq" style="margin-top: 14px">
+    Cascade : <span class="var">L<sub>i</sub><sup>(t+1)</sup></span> = ∑<sub>j∈défauts(t)</sub> <span class="var">D<sub>ij</sub></span> · (1 − <span class="var">ρ<sub>j</sub></span>) ; bascule si <span class="var">L<sub>i</sub></span> &gt; <span class="var">κ<sub>i</sub></span> · PIB<sub>i</sub>.
+  </div>
+</section>
+
+<!-- ============ A4 ============ -->
+<section class="chapter" id="a4">
+  <div class="head">
+    <div class="num">Figure A4<br/><span style="color:var(--ink-3); letter-spacing:.12em">ch. 3 §3.4</span></div>
+    <div>
+      <h2>Points d'étranglement : la géographie comme contrainte du graphe</h2>
+      <p class="intro">Tout le commerce maritime ne traverse pas le réseau au hasard : il converge vers une poignée de détroits et de canaux dont la fermeture déconnecte des continents entiers. Les sept goulets représentés ici — Suez, Panama, Malacca, Bab-el-Mandeb, Hormuz, Bosphore, Cap de Bonne-Espérance — concentrent à eux seuls plus de 60 % du tonnage mondial. La taille du marqueur reproduit la part du commerce mondial transitant ; les arcs sont les principales lignes maritimes (UNCTAD-MTRANS, 2024).</p>
+    </div>
+  </div>
+
+  <div class="stage" id="a4-stage" style="min-height: 520px">
+    <div class="canvas-pure" style="height: 520px">
+      <svg id="a4-svg"></svg>
+    </div>
+    <aside class="sidebar" id="a4-sidebar"></aside>
+  </div>
+</section>
+
+<!-- ============ A5 ============ -->
+<section class="chapter" id="a5">
+  <div class="head">
+    <div class="num">Figure A5<br/><span style="color:var(--ink-3); letter-spacing:.12em">ch. 4 §4.2</span></div>
+    <div>
+      <h2>Treillis de sous-groupes : la stabilité par le théorème de Lagrange</h2>
+      <p class="intro">Une coalition <em>G</em> et ses sous-coalitions <em>H ⊂ G</em> forment un treillis partiellement ordonné par l'inclusion. Le théorème de Lagrange impose que |H| divise |G| pour qu'<em>H</em> soit un sous-groupe au sens strict. Appliqué aux blocs Sud, ce critère sépare les emboîtements stables (CEDEAO ⊂ UA, ASEAN ⊂ RCEP) des emboîtements <em>cassés</em> qui annoncent des recompositions (AES ⊂ CEDEAO, 3 ne divise pas 15).</p>
+    </div>
+  </div>
+
+  <div class="stage" id="a5-stage" style="min-height: 580px">
+    <div class="canvas-pure" style="height: 580px">
+      <svg id="a5-svg"></svg>
+    </div>
+    <aside class="sidebar" id="a5-sidebar"></aside>
+  </div>
+</section>
+
+<footer>
+  <span>TOME 3 / ANNEXE A1–A5 — RÉSEAUX COMPLÉMENTAIRES</span>
+  <span>ESQUISSES STRUCTURELLES — VALEURS À CALIBRER EMPIRIQUEMENT</span>
+</footer>
+
+<script src="/assets/js/graph-utils.js"></script>
+<script src="/assets/js/annex1-monetary.js"></script>
+<script src="/assets/js/annex2-multiplex.js"></script>
+<script src="/assets/js/annex3-cascade.js"></script>
+<script src="/assets/js/annex4-chokepoints.js"></script>
+<script src="/assets/js/annex5-hasse.js"></script>
+
+</body>
+</html>
