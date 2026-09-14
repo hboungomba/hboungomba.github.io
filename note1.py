@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Hans Boungomba — voir LICENSES.md
 # Contenu de la première note. Importé par build.py.
 
 SLUG = "ape-afrique-ouest-refus-nigeria"

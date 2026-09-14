@@ -16,6 +16,23 @@ POUR REMPLACER UNE COUVERTURE
   Garder le même nom de fichier, ou modifier le bloc COVERS en tête de
   build.py puis relancer : python3 build.py
 
+PLANCHE DE COLLECTION
+
+  collection-planche.jpg        1400 x 1306   page /livres/la-promesse-et-lemprise/
+  collection-planche-large.jpg  2000 x 1866   version agrandie, ouverte au clic
+
+  Ces deux fichiers sont RECADRÉS depuis la planche complète fournie par l'auteur
+  (2160 x 3840). Le recadrage s'arrête juste sous les premières de couverture, à
+  y = 2015, et exclut délibérément la rangée des quatrièmes.
+
+  RAISON : les quatrièmes portent les codes-barres des ISBN provisoires des trois
+  tomes. Ces numéros ne doivent pas être publiés tant qu'ils ne sont pas définitifs
+  (voir README, section 5). Publier la planche entière les remettrait en ligne par
+  l'image, alors qu'ils ont été retirés du texte.
+
+  Quand les ISBN seront définitifs et les tomes parus, la planche complète pourra
+  être utilisée : recadrer à (0, 0, 2160, 3840) au lieu de (0, 0, 2160, 2015).
+
 SPÉCIFICATIONS
   JPEG progressif, 900 à 1200 px de large, moins de 300 Ko.
   Ratio réel du livre, sans marge blanche ajoutée.

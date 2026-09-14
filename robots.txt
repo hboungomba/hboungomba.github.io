@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hansboungomba.fr/sitemap.xml
+Sitemap: https://hboungomba.github.io/sitemap.xml

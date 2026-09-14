@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Hans Boungomba — voir LICENSES.md
 # Génère les pages du site. Relancer après toute modification : python3 build.py
 import pathlib
 import note1
 
 ROOT = pathlib.Path("/home/claude/site")
-DOMAIN = "https://hansboungomba.fr"
+# ADRESSE PUBLIQUE DU SITE — doit correspondre à l'adresse réellement servie.
+# Une balise canonique pointant vers un domaine inexistant dit aux moteurs de
+# ne pas indexer ces pages. Basculer sur https://hansboungomba.fr le jour où le
+# domaine est acheté ET que le DNS pointe sur GitHub Pages, pas avant.
+DOMAIN = "https://hboungomba.github.io"
 AUTHOR = "Hans Boungomba"
 CLAIM_SHORT = "On n'empêche plus un pays de se développer en le détruisant."
 ISBN = "978-2-322-61272-7"          # Équilibre instable
@@ -135,7 +137,7 @@ FOOT = f"""</main>
       <div>
         <ul>
           <li><a href="/livres/equilibre-instable/">Équilibre instable</a></li>
-          <li><a href="/livres/la-promesse-et-lemprise/">Accords commerciaux (trilogie)</a></li>
+          <li><a href="/livres/la-promesse-et-lemprise/">La promesse et l'emprise</a></li>
           <li><a href="/laboratoire/">Laboratoire interactif</a></li>
           <li><a href="/notes/">Notes</a></li>
         </ul>
@@ -454,6 +456,17 @@ page("/livres/la-promesse-et-lemprise/",
     <h1>La promesse et l'emprise</h1>
     <p class="accroche">Ils promettent le commerce. Ils instaurent la dépendance.</p>
     <p class="lede">Accords commerciaux et dépendance — une collection en trois volumes.</p>
+
+    <figure class="planche">
+      <a href="/assets/couvertures/collection-planche-large.jpg"
+         title="Voir la planche en grand">
+        <img src="/assets/couvertures/collection-planche.jpg"
+             alt="Planche de la collection La promesse et l'emprise : les premières de
+                  couverture des trois tomes — Accords commerciaux, Théorie des jeux et
+                  dépendance commerciale, Graphes, groupes et systèmes de dépendance."
+             width="1400" height="1306" loading="lazy" decoding="async"></a>
+      <figcaption>Les trois volumes de la collection. Cliquez pour agrandir.</figcaption>
+    </figure>
     <p>Depuis sept siècles, la même promesse revient : ouvrez vos marchés, la prospérité
       suivra. Depuis sept siècles, elle produit des positions asymétriques durables. Ni
       accident répété, ni complot — un mécanisme. La collection l'établit trois fois, avec
@@ -489,7 +502,7 @@ page("/livres/la-promesse-et-lemprise/",
     <p class="devise">Une collection pour penser le monde autrement.</p>
   </div>
 </section>
-""", schema=SERIES_SCHEMA)
+""", schema=SERIES_SCHEMA, og_image="collection-planche.jpg")
 
 
 def tome(num, titre, sous_titre, desc, argument, parts, labs, statut):
@@ -1000,9 +1013,11 @@ page("/contact/", f"Contact — {AUTHOR}",
     <h1>Contact</h1>
     <p class="lede">Presse, interventions, collaborations de recherche, questions sur les
       modèles.</p>
-    <p><a href="mailto:contact@hansboungomba.fr">contact@hansboungomba.fr</a></p>
-    """ + TODO.format("Créer l'adresse sur le domaine — une redirection suffit — plutôt "
-                      "qu'utiliser une adresse personnelle.") + """
+    <p id="mail-contact">Adresse de contact à venir. En attendant, passez par
+      <a href="https://github.com/hboungomba" rel="noopener">GitHub</a>.</p>
+    """ + TODO.format("Créer contact@hansboungomba.fr — une redirection suffit — puis "
+                      "remplacer ce paragraphe par le lien mailto. Une adresse annoncée "
+                      "qui rebondit est pire que pas d'adresse du tout.") + """
   </div>
 </section>
 """)

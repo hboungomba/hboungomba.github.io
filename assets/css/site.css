@@ -282,3 +282,13 @@ dl.skills { margin: 24px 0 0; }
 dl.skills dt { font-family: var(--sans); font-size: 12.5px; color: var(--copper-d);
   letter-spacing: .03em; text-transform: uppercase; margin-top: 20px; }
 dl.skills dd { margin: 5px 0 0; color: var(--ink-2); font-size: .98rem; }
+
+/* ---------- planche de collection ---------- */
+
+.planche { margin: 34px 0 8px; }
+.planche a { display: block; border: 1px solid var(--rule); background: var(--paper-2); }
+.planche a:hover { border-color: var(--copper); }
+.planche img { display: block; width: 100%; height: auto; }
+.planche figcaption {
+  font-family: var(--sans); font-size: 13px; color: var(--ink-3); margin-top: 10px;
+}

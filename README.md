@@ -221,7 +221,27 @@ git push
 
 `Settings > Pages` → Source : *Deploy from a branch*, Branch : `main`, Folder : `/root`.
 
-### Domaine personnalisé — ou pas
+### État actuel : en ligne sur hboungomba.github.io
+
+`DOMAIN` vaut `https://hboungomba.github.io` dans `build.py`. Le fichier `CNAME` a été
+retiré : tant que `hansboungomba.fr` n'est pas acheté et pointé sur GitHub, sa présence
+empêcherait le site d'être servi.
+
+**Le jour où le domaine est actif**, dans cet ordre :
+
+1. acheter le domaine et créer les enregistrements DNS (tableau ci-dessous) ;
+2. attendre que le DNS se propage et que le domaine réponde ;
+3. dans `build.py`, remettre `DOMAIN = "https://hansboungomba.fr"` ;
+4. recréer un fichier `CNAME` à la racine contenant `hansboungomba.fr` ;
+5. `python3 build.py && python3 inject_lab.py` ;
+6. dans `Settings > Pages`, renseigner le domaine, puis cocher *Enforce HTTPS* ;
+7. resoumettre le sitemap dans Search Console.
+
+L'étape 3 n'est pas cosmétique : les balises canoniques disent aux moteurs quelle adresse
+indexer. Si elles pointent vers un domaine qui n'existe pas, les pages ne sont pas indexées
+du tout.
+
+### Domaine personnalisé — la configuration DNS
 
 Le paquet contient un fichier `CNAME` avec `hansboungomba.fr`.
 

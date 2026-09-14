@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Hans Boungomba — voir LICENSES.md
 """Ajoute à chaque page du laboratoire une barre de retour identique et
 les métadonnées manquantes. Idempotent : relançable sans dupliquer."""
 import re, pathlib
 
 ROOT = pathlib.Path("/home/claude/site/laboratoire")
-DOMAIN = "https://hansboungomba.fr"
+DOMAIN = "https://hboungomba.github.io"
 MARK = "data-labbar"
 
 PAGES = {
@@ -72,7 +70,9 @@ for slug, (title, desc, src) in PAGES.items():
             f'\n<meta property="og:title" content="{title}">'
             f'\n<meta property="og:description" content="{desc}">'
             f'\n<meta property="og:url" content="{DOMAIN}/laboratoire/{slug}/">'
-            f'\n<meta property="og:locale" content="fr_FR">')
+            f'\n<meta property="og:locale" content="fr_FR">'
+            f'\n<meta property="og:image" content="{DOMAIN}/assets/couvertures/collection-planche.jpg">'
+            f'\n<meta name="twitter:card" content="summary_large_image">')
     html = html.replace("</title>", "</title>" + meta, 1)
 
     f.write_text(html, encoding="utf-8")
